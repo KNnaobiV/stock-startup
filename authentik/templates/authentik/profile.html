@@ -1,0 +1,22 @@
+{% extends '../base.html' %}
+
+
+{% block content %}
+  <h1>User Profile: {{ user.username }}</h1>
+
+  <h2>Portfolio</h2>
+  {% if portfolio %}
+    <p>Portfolio Name: {{ portfolio.name }}</p>
+    <p>Cash Value: ${{ portfolio.cash_value }}</p>
+  {% endif %}
+
+  <h2>Trade List</h2>
+  <ul>
+    {% for trade in trade_list %}
+      <li>
+        {{ trade.order_type }} - {{ trade.stock }} (Quantity: {{ trade.quantity }})
+      </li>
+    {% endfor %}
+  </ul>
+</div>
+{% endblock %}

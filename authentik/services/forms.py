@@ -5,6 +5,8 @@ from django.contrib.auth.models import Group
 from django import forms
 from django.contrib import admin
 
+from authentik.models import *
+
 User = get_user_model()
 
 class MyUserCreationForm(UserCreationForm):
@@ -18,3 +20,9 @@ class UserEditForm(UserChangeForm):
     class Meta:
         model = User
         fields = ['phone']
+
+
+class TradeCreateForm(forms.ModelForm):
+    class Meta:
+        model = Trade
+        fields = ['stock', 'order_type', 'quantity']

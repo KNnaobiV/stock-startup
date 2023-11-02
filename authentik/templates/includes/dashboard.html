@@ -1,0 +1,6 @@
+{% if user.is_authenticated %}
+    <li><a href="{% url 'authentik:logout' %}" class="black-text">Logout</a></li>
+{% else %}
+    <li><a href="{% url 'authentik:register' %}" class="black-text">Register</a></li>
+    <li><a href="{% url 'authentik:login' %}" class="black-text">Login</a></li>
+{% endif %}

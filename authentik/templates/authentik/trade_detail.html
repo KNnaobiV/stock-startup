@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block content %}
+    <h1>Trade Details</h1>
+    <table>
+        <tr>
+            <th>Order Type</th>
+            <td>{{ trade.order_type }}</td>
+        </tr>
+        <tr>
+            <th>Quantity</th>
+            <td>{{ trade.quantity }}</td>
+        </tr>
+        <tr>
+            <th>Stock</th>
+            <td>{{ trade.stock.symbol }}</td>
+        </tr>
+        <tr>
+            <th>Time</th>
+            <td>{{ trade.time }}</td>
+        </tr>
+    </table>
+    <a href="{% url 'trade-list' %}">Back to Trade List</a>
+{% endblock %}

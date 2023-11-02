@@ -12,8 +12,8 @@ def calculate_portfolio_pnl(portfolio, value):
 def calculate_portfolio_value():
     portfolios = Portfolio.objects.all()
     for portfolio in portfolios:
-        stocks = portfolio.stock_set.all()
-        stock_value = sum([stock.price * stock.value for stock in stocks])
+        stock_holdings = StockHolding.objects.filter(portfolio=portfolio)
+        stock_value = sum(stock.quantity * stock.stock.price for stock in stock_holdings)
         portfolio_value = stock_value + portfolio.cash_value
         portfolio.pnl = calculate_portfolio_pnl(portfolio, portfolio_value)
         portfolio.save()
