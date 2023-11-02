@@ -82,10 +82,7 @@ WSGI_APPLICATION = 'stockStartup.wsgi.application'
 DATABASES = {
         'default': {
             'ENGINE': 'djongo',
-            'NAME': 'your-db-name',
-            'ENFORCE_SCHEMA': False,
-            'CLIENT': {
-                'host': 'mongodb+srv://<username>:<password>@<atlas cluster>/<myFirstDatabase>?retryWrites=true&w=majority'
+            'NAME': 'stock_startup',
             }  
         }
 }
