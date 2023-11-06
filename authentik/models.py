@@ -57,6 +57,7 @@ class Portfolio(models.Model):
     name = models.CharField(max_length=15, unique=True, blank=False)
     trader = models.OneToOneField(DefaultUser, on_delete=models.DO_NOTHING)
     cash_value = models.DecimalField(max_digits=8, decimal_places=2)
+    total_value = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
     stocks = models.ManyToManyField(Stock, through="StockHolding")
     start_cash = models.DecimalField(
         max_digits=8, 
@@ -71,7 +72,7 @@ class Portfolio(models.Model):
         return f"{self.name}"
 
     def pnl(self):
-        return self.cash_value - self.start_cash
+        return self.total_value - self.start_cash
 
     def get_all_stocks(self):
         total_stocks = dict()

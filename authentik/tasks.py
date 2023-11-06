@@ -16,24 +16,24 @@ app.autodiscover_tasks()
 
 sys.path.append("..")
 from authentik.models import Stock, Portfolio
+from stockStartup.celery import app
 
 __all__ = [
     "calculate_portfolio_value",
     "update_stock_prices",
 ]
 
-@shared_task
+@app.task
 def calculate_portfolio_value():
     portfolios = Portfolio.objects.all()
     for portfolio in portfolios:
         stock_holdings = StockHolding.objects.filter(portfolio=portfolio)
         stock_value = sum(stock.quantity * stock.stock.price for stock in stock_holdings)
         portfolio_value = stock_value + portfolio.cash_value
-        portfolio.pnl = calculate_portfolio_pnl(portfolio, portfolio_value)
         portfolio.save()
 
 
-@shared_task
+@app.task
 def update_stock_prices():
     stocks = Stock.objects.all()
     for stock in stocks:

@@ -148,7 +148,7 @@ SIMPLE_JWT = {
 
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_RESULT_BACKEND = "redis://localhost:6379"
-
+# CELERY_BROKER_URL = 'amqp://guest:guest@localhost:5672//'
 CELERY_BEAT_SCHEDULE = {
     'fetch_portfolio_pnl_every-minute': {
         'task': 'authentik.tasks.fetch_portfolio_pnl',

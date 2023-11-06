@@ -12,6 +12,7 @@ urlpatterns = [
     path('profile/<str:username>', views.Profile.as_view(), name='profile'),
     path('trade/<uuid:uuid>/', views.TradeDetailView.as_view(), name='trade-detail'),
     path('trade/list/', views.TradeListView.as_view(), name='trade-list'),
+    path('portfolio/<int:id>', views.portfolio_pnl, name='portfolio_pnl')
 ]
 
 urlpatterns += api_urls
