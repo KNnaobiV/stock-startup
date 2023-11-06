@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     'rest_framework_simplejwt',
     'corsheaders',
     'stockStartup',
+    'django_crontab',
 ]
 
 MIDDLEWARE = [
@@ -164,3 +165,16 @@ CELERY_IMPORTS = (
     "authentik.tasks"
 )
 LOGIN_REDIRECT_URL = 'authentik:profile'
+
+CRONJOBS = [
+    (
+        "*/1****", 
+        'django.core.management.call_command', 
+        ['update_portfolio_value']
+    ),
+    (
+        "*/1****", 
+        'django.core.management.call_command', 
+        ['update_stock_prices']
+    )
+]
