@@ -7,3 +7,4 @@ class AuthentikConfig(AppConfig):
 
     def ready(self):
         import authentik.signals
+        #from authentik.tasks import calculate_portfolio_value, update_stock_prices

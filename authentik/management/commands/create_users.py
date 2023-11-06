@@ -38,33 +38,3 @@ class Command(BaseCommand):
             )
             trader.set_password(password)
             trader.save()
-            traders.append(trader)
-
-        symbols = ["AAPL", "GOOG", "AMD", "MSFT", "JPM", "IBM", ]
-        stocks = list()
-        for symbol in symbols:
-            stock, create = Stock.objects.get_or_create(
-                symbol=symbol,
-                price = round(random.uniform(0.5, 1.2), 2)
-            )
-            stock.save()
-            stocks.append(stock)
-
-        for trader in traders:
-            portfolio, created = Portfolio.objects.get_or_create(
-                trader=trader, name=f"{trader.username.title()}'s Portfolio_1",
-            )
-            portfolio.cash_value = 100.00
-            portfolio.start_cash = 100.00
-            portfolio.save()
-
-            trade_range = random.randrange(10, 11)
-            order_types = ['buy', 'sell']
-            for _ in range(trade_range):
-                trade = Trade.objects.create(
-                    stock=random.choice(stocks),
-                    portfolio=portfolio,
-                    order_type=random.choice(order_types),
-                    quantity=random.randint(1, 15)
-                )
-                trade.save()

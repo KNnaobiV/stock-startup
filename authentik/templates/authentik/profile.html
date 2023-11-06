@@ -1,15 +1,15 @@
 {% extends '../base.html' %}
 
-
 {% block content %}
   <h1>User Profile: {{ user.username }}</h1>
 
   <h2>Portfolio</h2>
   {% if portfolio %}
-    <p>Portfolio Name: {{ portfolio.name }}</p>
-    <p>Cash Value: ${{ portfolio.cash_value }}</p>
+    <p>Portfolio Name: {{ user.portfolio.name }}</p>
+    <p>Cash Value: ${{ user.portfolio.cash_value }}</p>
   {% endif %}
-
+  <h2>Portfolio P&L vs. Time</h2>
+  <canvas id="portfolioChart" width="400" height="200"></canvas>
   <h2>Trade List</h2>
   <ul>
     {% for trade in trade_list %}
@@ -19,4 +19,45 @@
     {% endfor %}
   </ul>
 </div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+    const ctx = document.getElementById('portfolioChart');
+
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: ['t1', 't2', 't3'],
+    datasets: [{
+      label: '# of Votes',
+      data: [12, 34, 56],
+      borderColor: 'rgba(75, 192, 192, 1)',
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    scales: {
+      x: {
+          // type: 'time',
+          time: {
+            unit: 'minute'
+          }
+        },
+      y: {
+        beginAtZero: true
+      }
+    }
+  }
+});
+
+  fetch('127.0.0.1:8000/portfolio_pnl/{{ portfolio.id }}/')
+    .then(reponse => response.json())
+    .then(data => {
+      portfolioChart.data.labels = data.labels;
+      portfolioChart.data.datasets[0] = data.values;
+      portfolioChart.update();
+    })
+    .catch(error => console.error(error));
+</script>
 {% endblock %}

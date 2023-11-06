@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework_simplejwt',
     'corsheaders',
+    'stockStartup',
 ]
 
 MIDDLEWARE = [
@@ -80,11 +81,11 @@ WSGI_APPLICATION = 'stockStartup.wsgi.application'
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
-        'default': {
-            'ENGINE': 'djongo',
-            'NAME': 'stock_startup',
-            }  
-        }
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': BASE_DIR / 'db.sqlite3',
+    }
+    
 }
 
 
@@ -147,11 +148,19 @@ SIMPLE_JWT = {
 
 CELERY_BROKER_URL = "redis://localhost:6379"
 CELERY_RESULT_BACKEND = "redis://localhost:6379"
-CELERY_BEAT_SCHEDULE = {
-    'calculate_pnl': {
-        'task': 'stockStartup.tasks.calculate_portfolio_pnl',
-        'schedule': timedelta(minutes=1),
-    },
-}
 
+CELERY_BEAT_SCHEDULE = {
+    'fetch_portfolio_pnl_every-minute': {
+        'task': 'authentik.tasks.fetch_portfolio_pnl',
+        'schedule': 60.0,
+    },
+    'update_stock_price_every_minute': {
+        'task': 'authentik.tasks.update_stock_prices',
+        'schedule': 60.0,
+    }
+    
+}
+CELERY_IMPORTS = (
+    "authentik.tasks"
+)
 LOGIN_REDIRECT_URL = 'authentik:profile'

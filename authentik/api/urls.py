@@ -14,6 +14,7 @@ urlpatterns = [
     path("logout/", LogoutView.as_view(), name="logout"),
     path("logout_all/", LogoutAllView.as_view(), name="logout_all"),
     path("portfolio/<int:pk>/", PortfolioDetailAPI.as_view(), name="portfolio_detail"),
+    #path('portfolio_pnl/<int:portfolio_id>/', views.portfolio_pnl, name='portfolio_pnl'),
     path("register/", RegisterView.as_view(), name="register"),
     path("trade/create/", TradeCreateAPI.as_view(), name="trade_create"),
     path("trade/list/", TradeListAPI.as_view(), name="trade_list"),

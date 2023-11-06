@@ -66,21 +66,24 @@ class Portfolio(models.Model):
         editable=False, 
         default=100
     )
+    
+    def __str__(self):
+        return f"{self.name}"
 
     def pnl(self):
-        return self.start_cash - self.initial_balance
+        return self.cash_value - self.start_cash
 
     def get_all_stocks(self):
         total_stocks = dict()
-        stock_holding = self.stockholding_set.all()
+        stock_holdings = self.stockholding_set.all()
 
-        for stock in stock_holding:
-            symbol = stock.symbol
-            quantity =stock.quantity
-            if symbol in total_stock:
+        for stock_holding in stock_holdings:
+            symbol = stock_holding.stock.symbol
+            quantity = stock_holding.quantity
+            if symbol in total_stocks:
                 total_stocks[symbol] += quantity
             else:
-                total_stocks[symbol] -= quantity
+                total_stocks[symbol] = quantity
         return total_stocks
 
     def save(self,  *args, **kwargs):
@@ -100,35 +103,41 @@ class StockHolding(models.Model):
 
 class Trade(models.Model):
     ORDER_CHOICES = (("buy", "BUY"), ("sell", "SELL"))
-    stock = models.OneToOneField(Stock, on_delete=models.DO_NOTHING)
+    stock = models.ForeignKey(Stock, on_delete=models.DO_NOTHING)
     portfolio = models.ForeignKey(Portfolio, on_delete=models.DO_NOTHING)
     order_type = models.CharField(max_length=5, choices=ORDER_CHOICES)
     quantity = models.PositiveIntegerField(blank=False)
     uuid = models.UUIDField(default=uuid.uuid4, unique=True, editable=False)
     time = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"""
+            {self.quantity} {self.stock.symbol} {self.order_type.capitalize()}
+            by {self.portfolio.name }
+        """
     def transaction_size(self):
         if self.order_type == "buy":
             return self.stock.price * self.quantity
         return self.stock.price  * self.quantity
 
-    # def save(self, *args, **kwargs):
-    #     if self.order_type == "sell":
-    #         total_stock = self.portfolio.get_all_stocks().get(self.stock.symbol, 0)
-    #         if self.quantity > total_stock:
-    #             raise ValidationError(
-    #                 f"""
-    #                 You have {total_stock} {self.stock.symbol}. 
-    #                 You are attempting to sell more stock than you have.
-    #                 """
-    #             )
+    def save(self, *args, **kwargs):
+        if self.order_type == "sell":
+            total_stock = self.portfolio.get_all_stocks().get(self.stock.symbol, 0)
+            if self.quantity > total_stock:
+                raise ValidationError(
+                    f"""
+                    You have {total_stock} {self.stock.symbol}. 
+                    You are attempting to sell more stock than you have.
+                    """
+                )
 
-    #     if (self.order_type == "buy" 
-    #     and self.transaction_size() > self.portfolio.cash_value):
-    #             raise ValidationError(f"""
-    #                 Insufficent funds. 
-    #                 AVAILABLE BALANCE:{self.trader.portfolio.balance}
-    #             """)
+        if (self.order_type == "buy" 
+        and self.transaction_size() > self.portfolio.cash_value):
+                raise ValidationError(f"""
+                    Insufficent funds. 
+                    AVAILABLE BALANCE:{self.trader.portfolio.balance}
+                """)
+        super().save(* args, **kwargs)
 
     def get_absolute_url(self):
         return reverse("authentik:trade", kwargs={uuid:self.uuid})

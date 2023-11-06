@@ -3,7 +3,6 @@ from django.dispatch import receiver
 from django.db import transaction
 
 from authentik.models import StockHolding, Trade
-from authentik.email import send_email_on_account_number_generation
 
 
 def update_stock_holding(portfolio, stock, quantity_change):

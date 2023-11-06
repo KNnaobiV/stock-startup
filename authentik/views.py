@@ -1,14 +1,27 @@
+from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.views import LoginView
+from django.db.models import Sum, F
+from django.db.models.functions import TruncMinute
+from django.http import JsonResponse
 from django.shortcuts import render, reverse
+from django.utils import timezone
+from django.views import View
 from django.views.generic.detail import DetailView
 from django.views.generic.list import ListView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from django.contrib.auth.views import LoginView
-from django.contrib.auth import get_user_model
+
 from authentik.services.forms import *
-from django.contrib.auth.mixins import LoginRequiredMixin
 from authentik.models  import *
-# Create your views here.
+
+
 User = get_user_model()
+
+def portfolio_pnl(request, portfolio_id):
+    portfolio = Portfolio.objects.get(pk=portfolio_id)
+    pnl = portfolio.pnl()
+    return JsonResponse({'pnl': pnl})
+
 
 class DefaultLoginView(LoginView):
     def get_success_url(self):
@@ -42,7 +55,6 @@ class Profile(LoginRequiredMixin, DetailView):
         else:
             context["trade_list"] = Trade.objects.filter(portfolio__trader=self.request.user)
         return context
-
 
 
 class TradeDetailView(LoginRequiredMixin, DetailView):
