@@ -21,10 +21,68 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <script>
-    const ctx = document.getElementById('portfolioChart');
+  const config = {
+    type: "line",
+    data: {
+      labels: [],
+      datasets: [{
+        data: [],
+        label: "Value",
+        borderColor: "#3e95cd",
+        fill: false
+      }]
+    },
+    options: {
+      scales: {
+        x: {
+          type: "time",
+          time: {
+            unit: 'minute'
+          }
+        },
+        y: {
+          beginAtZero: true
+        }
+      }
+    }
+  };
 
-new Chart(ctx, {
+  const ctx = document.getElementById("portfolioChart").getContext("2d");
+  const pnlChart = new Chart(ctx, config);
+
+  const fetchPNL = () => {
+    const portfolioId = {{ user.portfolio.id }};
+    console.log(portfolioId);
+
+    fetch(`http://127.0.0.1:8000/authentik/portfolio/${portfolioId}/`, {
+      method: 'GET',  // Use GET to retrieve data
+      headers: {
+        'Content-Type': 'application/json',
+      }
+    })
+    .then(response => response.json())  // Use response.json() to parse the JSON response
+    .then(data => {
+      pnlChart.data.labels = data.time;
+      pnlChart.data.datasets[0].data = data.pnl;
+      pnlChart.update();
+    })
+    .catch(error => console.error(error));
+  };
+
+  // Trigger the initial data fetch when the page loads
+  fetchPNL();
+
+  // Set up automatic updates every 60 seconds (60000 milliseconds)
+  setInterval(fetchPNL, 60000);
+</script>
+
+<!--   
+<script>
+    const ctxw = document.getElementById('portfolioChart');
+
+new Chart(ctxw, {
   type: 'line',
   data: {
     labels: ['t1', 't2', 't3'],
@@ -39,7 +97,7 @@ new Chart(ctx, {
     responsive: true,
     scales: {
       x: {
-          // type: 'time',
+            type: 'timeseries',
           time: {
             unit: 'minute'
           }
@@ -51,13 +109,20 @@ new Chart(ctx, {
   }
 });
 
-  fetch('127.0.0.1:8000/portfolio_pnl/{{ portfolio.id }}/')
+  fetch('127.0.0.1:8000/portfolio_pnl/{{ portfolio.id }}/',
+  {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json',
+  },
+  body: JSON.stringify({ portfolio_id: portfolioId }),
+})
     .then(reponse => response.json())
     .then(data => {
-      portfolioChart.data.labels = data.labels;
-      portfolioChart.data.datasets[0] = data.values;
+      portfolioChart.data.labels = data.time;
+      portfolioChart.data.datasets[0] = data.pnl;
       portfolioChart.update();
     })
     .catch(error => console.error(error));
 </script>
-{% endblock %}
+{% endblock %} -->

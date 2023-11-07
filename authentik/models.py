@@ -8,6 +8,7 @@ from authentik.validators import *
 # Create your models here.
 
 __all__ = [
+    "HistoricalStockPrice",
     "Portfolio",
     "Stock",
     "StockHolding",
@@ -51,6 +52,15 @@ class Stock(models.Model):
 
     def get_absolute_url(self):
         return reverse("authentik:stock", kwargs={symbol:self.symbol})
+
+class HistoricalStockPrice(models.Model):
+    symbol = models.CharField(max_length=7, blank=False)
+    time = models.DateTimeField(auto_now_add=True)
+    price = models.DecimalField(max_digits=8, decimal_places=2, blank=False)
+
+    def get_absolute_url(self):
+        pass
+
 
 
 class Portfolio(models.Model):

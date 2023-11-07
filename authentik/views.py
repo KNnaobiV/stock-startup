@@ -1,3 +1,4 @@
+from datetime import datetime
 from django.contrib.auth import get_user_model
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.views import LoginView
@@ -20,7 +21,7 @@ User = get_user_model()
 def portfolio_pnl(request, portfolio_id):
     portfolio = Portfolio.objects.get(pk=portfolio_id)
     pnl = portfolio.pnl()
-    return JsonResponse({'pnl': pnl})
+    return JsonResponse({'pnl': pnl, 'time': str(datetime.now())})
 
 
 class DefaultLoginView(LoginView):

@@ -6,7 +6,7 @@ from authentik.models import StockHolding, Portfolio
 
 
 class Command(BaseCommand):
-    def handle(self):
+    def handle(self, *args, **kwargs):
         portfolios = Portfolio.objects.all()
         for portfolio in portfolios:
             holdings = StockHolding.objects.filter(portfolio__id=portfolio.id)
