@@ -21,6 +21,16 @@
     </div>
 
     <div class="profile-section">
+      {% if user_list %}
+        <h2> Traders </h2>
+        <ul class="trade-list">
+          {% for user in user_list %}
+            <li>
+              <a href="{% url 'authentik:profile' user.username %}">{{ user.username}}</a>
+            </li>
+          {% endfor %}
+        </ul>
+      {% elif trade_list %}
         <h2>Trade List</h2>
         <ul class="trade-list">
             {% for trade in trade_list %}
@@ -29,6 +39,7 @@
                 </li>
             {% endfor %}
         </ul>
+      {% endif %}
     </div>
 </div>
 
@@ -38,7 +49,6 @@
     const config = {
         type: "line",
         data: {
-            labels: [],
             datasets: [{
                 data: [],
                 label: "Value",
@@ -48,15 +58,9 @@
         },
         options: {
             scales: {
-                x: {
-                    type: "time",
-                    time: {
-                        unit: 'minute',
-                    },
-                },
-                y: {
-                    beginAtZero: true,
-                },
+              y:{
+                beginAtZero: true,
+              }
             },
         },
     };
@@ -64,10 +68,9 @@
     const ctx = document.getElementById("portfolioChart").getContext("2d");
     const pnlChart = new Chart(ctx, config);
 
-    const updateChart = (newLabels, newData) => {
-        pnlChart.data.labels = [...pnlChart.data.labels, ...newLabels];
-        pnlChart.data.datasets[0].data = [...pnlChart.data.datasets[0].data, ...newData];
-        pnlChart.update();
+    const updateChart = (newData) => {
+      pnlChart.data.datasets[0].data.push(newData);
+      pnlChart.update();
     };
 
     const fetchPNL = () => {
@@ -81,9 +84,9 @@
         })
         .then(response => response.json())
         .then(data => {
-            const newLabels = [data.time];
-            const newData = [data.pnl];
-            updateChart(newLabels, newData);
+          const newData = { x: data.time, y: data.pnl };
+          updateChart(newData);
+            console.log(pnlChart.data);
         })
         .catch(error => console.error(error));
     };

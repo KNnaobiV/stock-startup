@@ -21,7 +21,7 @@ User = get_user_model()
 def portfolio_pnl(request, portfolio_id):
     portfolio = get_object_or_404(Portfolio, id=portfolio_id)
     pnl = portfolio.pnl()
-    data = {"data": {"pnl": pnl, "time": datetime.now()}}
+    data = {"data": {"pnl": pnl, "time": portfolio.time.strftime("%m/%d %H:%M:%S")}}
     return JsonResponse(data)
 
 
@@ -53,8 +53,8 @@ class Profile(LoginRequiredMixin, DetailView):
         if portfolio:
             context["portfolio"] = portfolio
         if self.request.user.is_manager:
-            context["trade_list"] = Trade.objects.filter(portfolio__trader__supervisor=self.request.user)
-        else:
+            context["user_list"] = User.objects.filter(supervisor=self.request.user)
+        if not self.request.user.is_manager:
             context["trade_list"] = Trade.objects.filter(portfolio__trader=self.request.user)
         return context
 
@@ -63,15 +63,17 @@ class TradeDetailView(LoginRequiredMixin, DetailView):
     model = Trade
     template_name = 'authentik/trade_detail.html'
     context_object_name = 'trade'
+    slug_field = "uuid"
+    slug_url_kwarg = "uuid"
 
 
 class TradeListView(LoginRequiredMixin, ListView):
     model = Trade
     template_name = 'authentik/trade_list.html'
-    context_object_name = 'trade'
+    context_object_name = 'trades'
 
     def get_queryset(self):
         if self.request.user.is_manager:
-            Trade.objects.filter(portfolio__trader__supervisor=user)
+            Trade.objects.filter(portfolio__trader__supervisor=self.request.user)
         else:
             return Trade.objects.filter(portfolio__trader=self.request.user)

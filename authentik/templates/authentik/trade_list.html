@@ -13,16 +13,16 @@
             </tr>
         </thead>
         <tbody>
-            {% for trade in trade_list %}
+            {% for trade in trades %}
                 <tr>
                     <td>{{ trade.order_type }}</td>
                     <td>{{ trade.quantity }}</td>
                     <td>{{ trade.stock.symbol }}</td>
                     <td>{{ trade.time }}</td>
-                    <td><a href="{% url 'trade-detail' trade.pk %}">Details</a></td>
+                    <td><a href="{% url 'authentik:trade-detail' trade.uuid %}">Details</a></td>
                 </tr>
             {% endfor %}
         </tbody>
     </table>
-    <a href="{% url 'dashboard' %}">Back to Dashboard</a>
+    <a href="{% url 'authentik:profile' user.username%}">Back to Dashboard</a>
 {% endblock %}

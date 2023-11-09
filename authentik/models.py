@@ -79,7 +79,7 @@ class Portfolio(models.Model):
     )
     trader = models.OneToOneField(DefaultUser, on_delete=models.DO_NOTHING)
     total_value = models.DecimalField(max_digits=8, decimal_places=2, default=0.00)
-    time = models.DateTimeField(auto_now_add=True)
+    time = models.DateTimeField(auto_now=True)
     
     def __str__(self):
         return f"{self.name}"

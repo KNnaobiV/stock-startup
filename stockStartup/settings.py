@@ -54,7 +54,7 @@ MIDDLEWARE = [
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
-    
+
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
@@ -179,3 +179,7 @@ CRONJOBS = [
         ['update_stock_prices']
     )
 ]
+
+STATIC_URL = '/static/'
+"""STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATICFILES_DIRS = [BASE_DIR / 'static',]"""

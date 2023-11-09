@@ -1,8 +1,10 @@
 <ul class="dashboard-menu">
     {% if user.is_authenticated %}
         <li><a href="{% url 'authentik:logout' %}" class="black-text white-bg">Logout</a></li>
+        <li><a href="#" class="black-text white-bg">Update Profile</a></li>
     {% else %}
         <li><a href="{% url 'authentik:register' %}" class="black-text primary-green-bg">Register</a></li>
         <li><a href="{% url 'authentik:login' %}" class="black-text secondary-green-bg">Login</a></li>
     {% endif %}
+    <li><a href="{% url 'authentik:trade-list' %}" class="black-text primary-green-bg">Trades</a></li>
 </ul>
