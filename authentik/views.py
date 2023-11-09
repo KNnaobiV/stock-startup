@@ -5,7 +5,7 @@ from django.contrib.auth.views import LoginView
 from django.db.models import Sum, F
 from django.db.models.functions import TruncMinute
 from django.http import JsonResponse
-from django.shortcuts import render, reverse
+from django.shortcuts import render, reverse, get_object_or_404
 from django.utils import timezone
 from django.views import View
 from django.views.generic.detail import DetailView
@@ -19,9 +19,10 @@ from authentik.models  import *
 User = get_user_model()
 
 def portfolio_pnl(request, portfolio_id):
-    portfolio = Portfolio.objects.get(pk=portfolio_id)
+    portfolio = get_object_or_404(Portfolio, id=portfolio_id)
     pnl = portfolio.pnl()
-    return JsonResponse({'pnl': pnl, 'time': str(datetime.now())})
+    data = {"data": {"pnl": pnl, "time": datetime.now()}}
+    return JsonResponse(data)
 
 
 class DefaultLoginView(LoginView):

@@ -1,128 +1,94 @@
-{% extends '../base.html' %}
+{% extends "../base.html" %}
+
+{% block title %}
+    User Profile: {{ user.username }}
+{% endblock %}
 
 {% block content %}
-  <h1>User Profile: {{ user.username }}</h1>
+    <h1 class="user-profile">{{ user.username }}</h1>
 
-  <h2>Portfolio</h2>
-  {% if portfolio %}
-    <p>Portfolio Name: {{ user.portfolio.name }}</p>
-    <p>Cash Value: ${{ user.portfolio.cash_value }}</p>
-  {% endif %}
-  <h2>Portfolio P&L vs. Time</h2>
-  <canvas id="portfolioChart" width="400" height="200"></canvas>
-  <h2>Trade List</h2>
-  <ul>
-    {% for trade in trade_list %}
-      <li>
-        {{ trade.order_type }} - {{ trade.stock }} (Quantity: {{ trade.quantity }})
-      </li>
-    {% endfor %}
-  </ul>
+    <div class="profile-section">
+        <h2>Portfolio</h2>
+        {% if portfolio %}
+            <p>Portfolio Name: {{ user.portfolio.name }}</p>
+            <p>Cash Value: ${{ user.portfolio.cash_value }}</p>
+        {% endif %}
+    </div>
+
+    <div class="profile-section">
+        <h2>Portfolio P&L vs. Time</h2>
+        <canvas id="portfolioChart" class="chart"></canvas>
+    </div>
+
+    <div class="profile-section">
+        <h2>Trade List</h2>
+        <ul class="trade-list">
+            {% for trade in trade_list %}
+                <li>
+                    {{ trade.order_type }} - {{ trade.stock }} (Quantity: {{ trade.quantity }})
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
 <script>
-  const config = {
-    type: "line",
-    data: {
-      labels: [],
-      datasets: [{
-        data: [],
-        label: "Value",
-        borderColor: "#3e95cd",
-        fill: false
-      }]
-    },
-    options: {
-      scales: {
-        x: {
-          type: "time",
-          time: {
-            unit: 'minute'
-          }
+    const config = {
+        type: "line",
+        data: {
+            labels: [],
+            datasets: [{
+                data: [],
+                label: "Value",
+                borderColor: "#3e95cd",
+                fill: false,
+            }],
         },
-        y: {
-          beginAtZero: true
-        }
-      }
-    }
-  };
-
-  const ctx = document.getElementById("portfolioChart").getContext("2d");
-  const pnlChart = new Chart(ctx, config);
-
-  const fetchPNL = () => {
-    const portfolioId = {{ user.portfolio.id }};
-    console.log(portfolioId);
-
-    fetch(`http://127.0.0.1:8000/authentik/portfolio/${portfolioId}/`, {
-      method: 'GET',  // Use GET to retrieve data
-      headers: {
-        'Content-Type': 'application/json',
-      }
-    })
-    .then(response => response.json())  // Use response.json() to parse the JSON response
-    .then(data => {
-      pnlChart.data.labels = data.time;
-      pnlChart.data.datasets[0].data = data.pnl;
-      pnlChart.update();
-    })
-    .catch(error => console.error(error));
-  };
-
-  // Trigger the initial data fetch when the page loads
-  fetchPNL();
-
-  // Set up automatic updates every 60 seconds (60000 milliseconds)
-  setInterval(fetchPNL, 60000);
-</script>
-
-<!--   
-<script>
-    const ctxw = document.getElementById('portfolioChart');
-
-new Chart(ctxw, {
-  type: 'line',
-  data: {
-    labels: ['t1', 't2', 't3'],
-    datasets: [{
-      label: '# of Votes',
-      data: [12, 34, 56],
-      borderColor: 'rgba(75, 192, 192, 1)',
-      borderWidth: 1
-    }]
-  },
-  options: {
-    responsive: true,
-    scales: {
-      x: {
-            type: 'timeseries',
-          time: {
-            unit: 'minute'
-          }
+        options: {
+            scales: {
+                x: {
+                    type: "time",
+                    time: {
+                        unit: 'minute',
+                    },
+                },
+                y: {
+                    beginAtZero: true,
+                },
+            },
         },
-      y: {
-        beginAtZero: true
-      }
-    }
-  }
-});
+    };
 
-  fetch('127.0.0.1:8000/portfolio_pnl/{{ portfolio.id }}/',
-  {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json',
-  },
-  body: JSON.stringify({ portfolio_id: portfolioId }),
-})
-    .then(reponse => response.json())
-    .then(data => {
-      portfolioChart.data.labels = data.time;
-      portfolioChart.data.datasets[0] = data.pnl;
-      portfolioChart.update();
-    })
-    .catch(error => console.error(error));
+    const ctx = document.getElementById("portfolioChart").getContext("2d");
+    const pnlChart = new Chart(ctx, config);
+
+    const updateChart = (newLabels, newData) => {
+        pnlChart.data.labels = [...pnlChart.data.labels, ...newLabels];
+        pnlChart.data.datasets[0].data = [...pnlChart.data.datasets[0].data, ...newData];
+        pnlChart.update();
+    };
+
+    const fetchPNL = () => {
+        const portfolioId = {{ user.portfolio.id }};
+
+        fetch(`http://127.0.0.1:8000/authentik/portfolio/${portfolioId}/`, {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        })
+        .then(response => response.json())
+        .then(data => {
+            const newLabels = [data.time];
+            const newData = [data.pnl];
+            updateChart(newLabels, newData);
+        })
+        .catch(error => console.error(error));
+    };
+
+    fetchPNL();
+    setInterval(fetchPNL, 60000);
 </script>
-{% endblock %} -->
+{% endblock %}

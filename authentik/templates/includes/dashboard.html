@@ -1,6 +1,8 @@
-{% if user.is_authenticated %}
-    <li><a href="{% url 'authentik:logout' %}" class="black-text">Logout</a></li>
-{% else %}
-    <li><a href="{% url 'authentik:register' %}" class="black-text">Register</a></li>
-    <li><a href="{% url 'authentik:login' %}" class="black-text">Login</a></li>
-{% endif %}
+<ul class="dashboard-menu">
+    {% if user.is_authenticated %}
+        <li><a href="{% url 'authentik:logout' %}" class="black-text white-bg">Logout</a></li>
+    {% else %}
+        <li><a href="{% url 'authentik:register' %}" class="black-text primary-green-bg">Register</a></li>
+        <li><a href="{% url 'authentik:login' %}" class="black-text secondary-green-bg">Login</a></li>
+    {% endif %}
+</ul>
