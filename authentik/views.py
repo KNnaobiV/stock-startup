@@ -71,9 +71,5 @@ class TradeListView(LoginRequiredMixin, ListView):
     model = Trade
     template_name = 'authentik/trade_list.html'
     context_object_name = 'trades'
-
     def get_queryset(self):
-        if self.request.user.is_manager:
-            Trade.objects.filter(portfolio__trader__supervisor=self.request.user)
-        else:
-            return Trade.objects.filter(portfolio__trader=self.request.user)
+        return Trade.objects.filter(portfolio__trader=self.request.user)
