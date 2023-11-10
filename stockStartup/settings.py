@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'corsheaders',
     'stockStartup',
     'django_crontab',
+    'djongo',
 ]
 
 MIDDLEWARE = [
@@ -81,14 +82,20 @@ WSGI_APPLICATION = 'stockStartup.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
 DATABASES = {
+    'default': {
+          'ENGINE': 'djongo',
+          'NAME': 'stock_mongo',
+      }
+}
+
+"""DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
         'NAME': BASE_DIR / 'db.sqlite3',
     }
     
-}
+}"""
 
 
 # Password validation
@@ -181,5 +188,3 @@ CRONJOBS = [
 ]
 
 STATIC_URL = '/static/'
-"""STATIC_ROOT = BASE_DIR / 'staticfiles'
-STATICFILES_DIRS = [BASE_DIR / 'static',]"""
